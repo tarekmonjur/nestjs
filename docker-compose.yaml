@@ -1,0 +1,53 @@
+version: '3.3'
+
+networks:
+  nestjs:
+    driver: bridge
+
+volumes:
+  nestjs-db:
+    driver: local
+
+services:
+  db:
+    image: mysql:5.7.21
+    ports:
+      - 3307:3306
+#    networks:
+#      - nestjs
+    volumes:
+      - "nestjs-db:/var/lib/mysql"
+#      - "./db:/var/lib/mysql"
+    environment:
+      MYSQL_DATABASE: nestjs_db
+      MYSQL_USER: nestjs
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+
+  app:
+    image: node:12.18
+    restart: always
+    working_dir: "/app"
+    command: "npm run start:dev"
+    ports:
+      - 3001:8080
+#    networks:
+#      - nestjs
+    links:
+      - db
+    environment:
+      NODE_ENV: development
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
+      NO_SSL_MODE: 1
+      APP_NAME: NESTJS
+      PORT: 8080
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: nestjs_db
+      DB_USERNAME: nestjs
+      DB_PASSWORD: password
+      DB_ROOT_PASSWORD: password
+      DB_TYPE: mysql
+    volumes:
+      - "./:/app"
+      - "./logs:/root/.npm/_logs"
