@@ -6,7 +6,8 @@ import {
   HttpCode,
   HttpStatus,
   HttpException,
-  BadRequestException
+  BadRequestException,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { Request, Response} from 'express';
 import { AppService } from './app.service';
@@ -45,7 +46,7 @@ export class AppController {
   }
 
   @Delete(':id')
-  deleteHello(@Param('id') id): number {
+  deleteHello(@Param('id', ParseIntPipe) id): number {
     if (typeof id === 'number') {
       return id;
     }
